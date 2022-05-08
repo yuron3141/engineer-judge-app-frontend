@@ -1,0 +1,52 @@
+[
+    {
+        "type": "A",
+        "vector": -1,
+        "question": "技術やプロダクトに関する情報を発信するのは楽しい"
+    },
+    {
+        "type": "A",
+        "vector": -1,
+        "question": "起業や経営に興味がある"
+    },
+    {
+        "type": "A",
+        "vector": -1,
+        "question": "ブログやSNSで情報発信をしている"
+    },
+    {
+        "type": "A",
+        "vector": -1,
+        "question": "イニシアティブをとることがある"
+    },
+    {
+        "type": "A",
+        "vector": -1,
+        "question": "多くの人に自分を知ってもらいたい"
+    },
+    {
+        "type": "A",
+        "vector": 1,
+        "question": "チームで開発するより一人で開発する方が良い"
+    },
+    {
+        "type": "A",
+        "vector": 1,
+        "question": "自分はどちらかというとインドア派だ"
+    },
+    {
+        "type": "A",
+        "vector": -1,
+        "question": "コミニケーション能力には自信がある"
+    },
+    {
+        "type": "A",
+        "vector": -1,
+        "question": "人脈を作ることに積極的だ"
+    },
+    {
+        "type": "A",
+        "vector": 1,
+        "question": "大きな課題よりも小さな課題を解決したい"
+    }
+]
