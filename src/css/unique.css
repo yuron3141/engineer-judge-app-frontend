@@ -92,3 +92,13 @@
 .intype{
   background-color: #1e90ff;
 }
+
+
+.mobilechart{
+  height: 380px;
+  width: 380px;
+}
+.chart{
+  height: 430px;
+  width: 430px;
+}

@@ -43,10 +43,10 @@ export const Result = ({result,setResult}) =>{
         height: 15,
         borderRadius: 5,
         [`&.${linearProgressClasses.colorPrimary}`]: {
-            backgroundColor: colors[2] ? '#ffffff' : '#00a3a7',
+            backgroundColor: colors[2] ? '#ffffff' : '#c70067',
         },
         [`& .${linearProgressClasses.bar}`]: {
-            backgroundColor: colors[2] ? '#c70067' : '#ffffff',
+            backgroundColor: colors[2] ? '#00a3a7' : '#ffffff',
         },
     }));
     const BorderLinearProgressD = styled(LinearProgress)(({ theme }) => ({
@@ -107,6 +107,7 @@ export const Result = ({result,setResult}) =>{
             new Array(3).fill(false).map((color, index) => (array[index] < 50 ? false : true))
         );
     };
+
     const main = useCallback(() => {
         //計算させて結果をディコードさせる処理
         const output = result.calced;
@@ -144,7 +145,7 @@ export const Result = ({result,setResult}) =>{
             }
 
         }
-        if(vals[2] > 0){
+        if(vals[2] < 0){
             setBool();
             setName(ResultSentence);
             setImg(ResultSentence, false);
@@ -173,13 +174,28 @@ export const Result = ({result,setResult}) =>{
         <>
             {loadcheck ? (
                 <>
+                    <HelmetProvider>
+                        <Helmet>
+                            <title>ページが更新されました</title>
+                            <meta
+                                name="description"
+                                content="ページの再読み込みが行われた、もしくは正しく質問に答えなかったため結果を表示できませんでした。"
+                            />
+                            <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0"></meta>
+                            <head prefix="og: http://ogp.me/ns#" />
+                            <meta property="og:type" content="website" />
+                            <meta property="og:title" content="ページが更新され魔いs田" />
+                            <meta property="og:description" content="" />
+                            <meta property="og:site_name" content="ITエンジニア性格診断" />
+                        </Helmet>
+                    </HelmetProvider>
                     <Stack sx={{ width: '100%' }} spacing={2}>
                         <Alert severity="error">ページの再読み込みが行われた、もしくは正しく質問に答えなかったため結果を表示できませんでした。</Alert>
                     </Stack>
                     <div style={{height: '720px', textAlign: 'center', paddingTop: 40}}>
                         <Typography variant="h5">ページを更新した、または質問にほとんど答えませんでしたか？</Typography>
                         <Typography variant="body2">ページを更新してしまった方は申し訳ないですが、もう一度診断を受けてください。</Typography>
-                        <Typography variant="body2">診断を正しくけなかった方はできるだけ真ん中の回答を避けてもう一度診断を受けてください。</Typography>
+                        <Typography variant="body2">診断を適切に受けなかった方はできるだけ真ん中の回答を避けてもう一度診断を受けてください。</Typography>
                         <Button to="/" component={Link} variant="contained" style={{marginTop: 60}}>テストを受ける</Button>
                     </div>
                 </>
@@ -307,8 +323,8 @@ export const Result = ({result,setResult}) =>{
                                             </Box>
                                         </Box>
                                         <div className="decisionmobile">
-                                            <div style={{color: '#c70067', fontWeight: 'bold'}}>ジェネラル</div> 
-                                            <div style={{color: '#00a3a7', fontWeight: 'bold'}}>スペシャル</div>
+                                            <div style={{color: '#00a3a7', fontWeight: 'bold'}}>スペシャル</div> 
+                                            <div style={{color: '#c70067', fontWeight: 'bold'}}>ジェネラル</div>
                                         </div>
                                 </Grid>
                                 <Grid item xs={4} sm={12} md={13} sx={{m: 1}}>

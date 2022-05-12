@@ -20,20 +20,19 @@ export const Home = ({result,setResult})=>{
                     <title>ITエンジニア性格診断</title>
                     <meta
                         name="description"
-                        content="このITエンジニア性格診断は、独自の分析と質問構成に基づいて作成しています。診断結果は繰り返しトライすることで違う結果になることがあります。これは性格・タイプの「揺らぎ」や「重なり性」を示しています。自分のエンジニアとしての考え方や特徴の傾向を知ることができますのでぜひやってみてください。"
+                        content="このITエンジニア性格診断は独自の分析と質問構成に基づいて作成しています。診断結果は繰り返しトライすることで違う結果になることがあります。これは性格・タイプの「揺らぎ」や「重なり性」を示しています。自分のエンジニアとしての考え方や特徴の傾向を知ることができますのでぜひやってみてください。"
                     />
                     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0"></meta>
                     <head prefix="og: http://ogp.me/ns#" />
                     <meta property="og:url" content={url} />
                     <meta property="og:type" content="website" />
                     <meta property="og:title" content="ITエンジニア性格診断：トップ" />
-                    <meta property="og:description" content="このITエンジニア性格診断は受験者から結構当たってると言われます。あなたがエンジニアとしてどんな傾向があるのか性格で具体的な理由を手に入れましょう。" />
+                    <meta property="og:description" content="このITエンジニア性格診断は独自の分析と質問構成に基づいて作成しています。診断結果は繰り返しトライすることで違う結果になることがあります。これは性格・タイプの「揺らぎ」や「重なり性」を示しています。自分のエンジニアとしての考え方や特徴の傾向を知ることができますのでぜひやってみてください。" />
                     <meta property="og:site_name" content="ITエンジニア性格診断" />
                 </Helmet>
             </HelmetProvider>
             <Typography variant={ isMobile ? 'h4' : 'h3'} sx={{ mt: 6}} fontWeight={"bold"} align="center">ITエンジニア性格診断</Typography>
             <div style={isMobile ? {textAlign: "center"} : {textAlign: "center", marginTop: "4px"}}>
-                <Typography variant='h6' sx={{mt: 2}}>診断を受験した総人数は1000人です</Typography>
                 <Typography variant="body2" sx={{ mt: 4 }}>
                     このITエンジニア性格診断は、独自の分析と質問構成に基づいて作成しています。
                 </Typography>

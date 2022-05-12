@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import '../css/unique.css';
 import {useTheme, useMediaQuery} from '@mui/material';
@@ -14,6 +15,8 @@ import Data1 from '../json/list1.json';
 import Data2 from '../json/list2.json';
 import Data3 from '../json/list3.json';
 import Data4 from '../json/list4.json';
+
+import { apiURL } from '../config'
 
 export const Test= ({result,setResult}) => {
     const theme = useTheme();
@@ -113,6 +116,22 @@ export const Test= ({result,setResult}) => {
                 behavior: "smooth",
             });
             
+            //axiosでデータベースへデータ送信
+            
+            axios.post(apiURL+"/api/v1/datas", {
+                calced: newResult,
+                age: result.age,
+                sex: result.sex,
+                month: result.month,
+            }).then(
+                res => {
+                    //console.log('status:', res.status);
+                }
+            ).catch(err=>{
+                console.log("error", err);
+            })
+            
+
             navigate('/result');
         }
     };
