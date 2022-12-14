@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { styled } from '@mui/material/styles';
 import {useTheme, useMediaQuery, Paper} from '@mui/material';
@@ -8,25 +8,22 @@ import { Typography } from '@mui/material'
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 
-import resultList from '../json/result.json';
+import list from '../json/result.json';
 
-export const Result = ({result,setResult}) =>{
+export const Result = () =>{
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    const url = window.location.href.replace("result", "");
 
+    //バーの色を調整する関数群
     const BorderLinearProgressA = styled(LinearProgress)(({ theme }) => ({
         height: 15,
         borderRadius: 5,
         [`&.${linearProgressClasses.colorPrimary}`]: {
-            backgroundColor: colors[0] ? '#ffffff' : '#ea5550',
+            backgroundColor: colors[0] ? '#ffffff' : '#1e90ff',
         },
         [`& .${linearProgressClasses.bar}`]: {
-            backgroundColor: colors[0] ? '#1e90ff' : '#ffffff',
+            backgroundColor: colors[0] ? '#ea5550' : '#ffffff',
         },
     }));
     const BorderLinearProgressB = styled(LinearProgress)(({ theme }) => ({
@@ -53,176 +50,113 @@ export const Result = ({result,setResult}) =>{
         height: 15,
         borderRadius: 5,
         [`&.${linearProgressClasses.colorPrimary}`]: {
-            backgroundColor: '#ffffff',
+            backgroundColor: colors[3] ? '#ffffff' : '#778899',
         },
         [`& .${linearProgressClasses.bar}`]: {
-            backgroundColor: '#192f60',
+            backgroundColor: colors[3] ? '#192f60' : '#ffffff',
         },
     }));
 
+    //クエリパラメータから値を得る
+    const [queryParams] = useSearchParams();
+    const score_a = queryParams.get("scorea");
+    const score_b = queryParams.get("scoreb");
+    const score_c = queryParams.get("scorec");
+    const score_d = queryParams.get("scored");
+
+    const directurl = window.location.origin + window.location.pathname;
 
     //結果制御処理
-    const [ResultSentence, setResultSentence] = useState(resultList[2]);
-    const [typeBool, setTypeBool] = useState(false);
-    const [loadcheck, setLoadcheck] = useState(false);
+    const [loadcheck, setLoadcheck] = useState(false); //クエリパラメータが指定されているかどうか判断に使用
     const [params, setParams] = useState(new Array(4).fill(0));
-    const [colors, setColors] = useState(new Array(3).fill(false));
-    const [typeName, setTypeName] = useState(ResultSentence.patternA);
-    const [image, setImage] = useState(ResultSentence.img);
+    const [colors, setColors] = useState(new Array(4).fill(false));
+    const [yourresult, setYourresult] = useState({img: "", style: "", type: "", discription: new Array(4).fill(""), features: new Array(4).fill("")});
 
-    const setResultA = (num) => {
-        setResultSentence(
-            resultList[num]
-        )
-    };
-    const setFalse = () => {
-        setLoadcheck(
-            true
-        );
-
-    };
-    const setBool = () => {
-        setTypeBool(
-            true
-        );
-    };
-    const setName = (val) => {
-        setTypeName(
-            val.patternB
-        );
-    };
-    const setImg = (val, bool) =>{
-        if(!bool){
-            setImage(
-                val.img
-            );
-        }else{
-            setImage(
-                val.img2
-            );
-        }
-    };
-    const setColor = (array) => {
-        setColors(
-            new Array(3).fill(false).map((color, index) => (array[index] < 50 ? false : true))
-        );
-    };
-
-    const main = useCallback(() => {
-        //計算させて結果をディコードさせる処理
-        const output = result.calced;
-        if(output[0] === 0 && output[1] === 0 && output[2] === 0 && output[3] === 0)
-        {
-            setFalse();
-        }
-
-        let vals = new Array(4).fill(0);
-        for(let j=0; j<vals.length; j++){
-            vals[j] = parseInt(output[j] / 0.4);
-        }
-        //表示要素のディコード
-        //外向型(社会・事業型なら)
-        if(vals[0] <= -25){
-            //事業者型なら
-            if(vals[1] > 0){
-                setResultA(0);
-            //社会指向型なら
-            }else{
-                setResultA(1);
-            }
-        }else{
-            //職業人型なら
-            if(vals[3] <= -20){
-                setResultA(2);
-            //モノづくり楽しみ型なら
-            }else if(vals[1] < 0){
-                setResultA(4);
-            //技術職人型なら
-            }else if(vals[1] >= 0){
-                setResultA(3);
-            }else{
-                setResultA(2);
-            }
-
-        }
-        if(vals[2] < 0){
-            setBool();
-            setName(ResultSentence);
-            setImg(ResultSentence, false);
-        }else{
-            setImg(ResultSentence, true);
-        }
-
-        let outparams = new Array(4).fill(50);
-        for(let i=0; i<outparams.length; i++){
-            outparams[i] = outparams[i] + parseInt(result.calced[i] * 2.5);
-        }
-
-        setParams(
-            outparams
-        );
-        
-        setColor(outparams);
-
-    }, [result.calced, ResultSentence]);
-
+    let navigate = useNavigate();
     useEffect(() => {
-        main();        
-    }, [main]);
+        //バーの色向きを調整する関数
+        const barcolorEdit = (array) => {
+            setColors(
+                new Array(4).fill(false).map((color, index) => (array[index] < 50 ? false : true))
+            );
+        };
+
+        //クエリの調査と計算および結果の挿入処理
+        function searchResult () {
+            //クエリパラメータが指定されていない場合
+            if(score_a === null || score_b === null || score_c === null || score_d === null){
+                console.log("起動しました");
+                setLoadcheck(true);
+
+                navigate('/start');
+
+            //スコアの計算および情報の更新
+            }else{
+                setYourresult(() =>{
+
+                    if(score_a > 100  && score_b > 100 && score_c > 100 && score_d > 100){
+                        return {...yourresult, img: list[0].img, style: list[0].style, type: list[0].type, discription: list[0].discription, features: list[0].features};
+                    }else if(score_a > 100  && score_b > 100 && score_c < 100 && score_d > 100){
+                        return {...yourresult, img: list[2].img, style: list[2].style, type: list[2].type, discription: list[2].discription, features: list[2].features};
+                    }else if(score_a > 100 && score_b < 100 && score_c > 100 && score_d > 100){
+                        return {...yourresult, img: list[1].img, style: list[1].style, type: list[1].type, discription: list[1].discription, features: list[1].features};
+                    }else if(score_a > 100 && score_b < 100 && score_c < 100 && score_d > 100){
+                        return {...yourresult, img: list[3].img, style: list[3].style, type: list[3].type, discription: list[3].discription, features: list[3].features};
+                    }else if(score_a < 100 && score_b > 100 && score_c > 100 && score_d > 100){
+                        return {...yourresult, img: list[7].img, style: list[7].style, type: list[7].type, discription: list[7].discription, features: list[7].features};
+                    }else if(score_a < 100 && score_b > 100 && score_c < 100 && score_d > 100){
+                        return {...yourresult, img: list[6].img, style: list[6].style, type: list[6].type, discription: list[6].discription, features: list[6].features};
+                    }else if(score_a < 100 && score_b < 100 && score_c > 100 && score_d > 100){
+                        return {...yourresult, img: list[5].img, style: list[5].style, type: list[5].type, discription: list[5].discription, features: list[5].features};
+                    }else if(score_a < 100 && score_b < 100 && score_c < 100 && score_d > 100 ){
+                        return {...yourresult, img: list[4].img, style: list[4].style, type: list[4].type, discription: list[4].discription, features: list[4].features};
+                    }else if(score_c < 100 ){
+                        return {...yourresult, img: list[8].img, style: list[8].style, type: list[8].type, discription: list[8].discription, features: list[8].features};
+                    }else if(score_c > 100 ){
+                        return {...yourresult, img: list[9].img, style: list[9].style, type: list[9].type, discription: list[9].discription, features: list[9].features};
+                    }
+
+                })
+            }
+
+            setParams(() =>{
+                const calc_scores = [score_a, score_b, score_c, score_d].map((index)=>(index/2));
+                barcolorEdit(calc_scores);
+
+                return calc_scores;
+            });
+
+        };
+        searchResult();
+
+    }, []);
 
     return (
         <>
-            {loadcheck ? (
-                <>
-                    <HelmetProvider>
-                        <Helmet>
-                            <title>ページが更新されました</title>
-                            <meta
-                                name="description"
-                                content="ページの再読み込みが行われた、もしくは正しく質問に答えなかったため結果を表示できませんでした。"
-                            />
-                            <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0"></meta>
-                            <head prefix="og: http://ogp.me/ns#" />
-                            <meta property="og:type" content="website" />
-                            <meta property="og:title" content="ページが更新され魔いs田" />
-                            <meta property="og:description" content="" />
-                            <meta property="og:site_name" content="ITエンジニア性格診断" />
-                        </Helmet>
-                    </HelmetProvider>
-                    <Stack sx={{ width: '100%' }} spacing={2}>
-                        <Alert severity="error">ページの再読み込みが行われた、もしくは正しく質問に答えなかったため結果を表示できませんでした。</Alert>
-                    </Stack>
-                    <div style={{height: '720px', textAlign: 'center', paddingTop: 40}}>
-                        <Typography variant="h5">ページを更新した、または質問にほとんど答えませんでしたか？</Typography>
-                        <Typography variant="body2">ページを更新してしまった方は申し訳ないですが、もう一度診断を受けてください。</Typography>
-                        <Typography variant="body2">診断を適切に受けなかった方はできるだけ真ん中の回答を避けてもう一度診断を受けてください。</Typography>
-                        <Button to="/" component={Link} variant="contained" style={{marginTop: 60}}>テストを受ける</Button>
-                    </div>
-                </>
-            ) : (
+            {!loadcheck && (
                 <>
                 <HelmetProvider>
                     <Helmet>
-                        <title>診断結果</title>
+                        <title>診断結果 | ITエンジニア性格診断テスト</title>
                         <meta
                             name="description"
                             content="ITエンジニア性格診断の結果です"
                         />
                         <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0"></meta>
                         <head prefix="og: http://ogp.me/ns#" />
-                        <meta property="og:url" content={url} />
+                        <meta property="og:url" content={directurl} />
                         <meta property="og:type" content="website" />
-                        <meta property="og:title" content={"あなたは" + ResultSentence.type + "型エンジニア" + typeName + "タイプです"} />
-                        <meta property="og:description" content={ResultSentence.chars1 + ResultSentence.chars2 + ResultSentence.chars3 + ResultSentence.chars4} />
-                        <meta property="og:site_name" content="ITエンジニア性格診断" />
-                        <meta property="og:image" content={`${process.env.PUBLIC_URL}/imgs/${image}`} />
+                        <meta property="og:title" content={"あなたは" + yourresult.style + "型エンジニア" + yourresult.type + "タイプです"} />
+                        <meta property="og:description" content={yourresult.discription[0] + yourresult.discription[1] + yourresult.discription[2] + yourresult.discription[3]} />
+                        <meta property="og:site_name" content="ITエンジニア性格診断テスト" />
+                        <meta property="og:image" content={`${process.env.PUBLIC_URL}/imgs/${yourresult.img}`} />
                     </Helmet>
                 </HelmetProvider>
                 <Typography variant={ isMobile ? 'h5' : 'h4'} fontWeight={"bold"} align="center" style={{marginTop: "50px"}}>
-                    あなたは{ResultSentence.type}型エンジニア
+                    あなたは{yourresult.style}型エンジニア
                 </Typography>
                 <Typography variant={ isMobile ? 'h5' : 'h4'} fontWeight={"bold"} align="center" style={{marginBottom: "20px"}}>
-                    {typeBool ? ResultSentence.patternA : ResultSentence.patternB}タイプです
+                    {yourresult.type}タイプです
                 </Typography>
                 <svg viewBox="0 0 1920 250" preserveAspectRatio="none" className="background">
                     <polygon fill="#e7dfea" points="1920 823 0 823 0 0 396 101 835 31 1574 149 1920 17 1920 823"></polygon>
@@ -232,21 +166,13 @@ export const Result = ({result,setResult}) =>{
                         <Box sx={{ flexGrow: 1 }}  style={isMobile ? {display: 'block'} : {display: 'inline-block', width: '650px'}}>
                             <Grid container direction={isMobile ? 'column-reverse' : 'row'} spacing={{ xs: 4, md: 8 }} columns={{ xs: 4, sm: 12 }} >
                                 <Grid item xs={4} sm={7} sx={isMobile ? { m: 1} : {}}>
-                                    <Typography variant="body1" align="left">
-                                        {ResultSentence.chars1}
-                                    </Typography>
-                                    <Typography variant="body1" align="left">
-                                        {ResultSentence.chars2}
-                                    </Typography>
-                                    <Typography variant="body1" align="left">
-                                        {ResultSentence.chars3}
-                                    </Typography>
-                                    <Typography variant="body1" align="left">
-                                        {ResultSentence.chars4}
-                                    </Typography>
-                                    <Typography variant="body1" align="left">
-                                        {typeBool ? ResultSentence.charsA : ResultSentence.charsB}
-                                    </Typography>
+                                    { yourresult.discription.map((disp, index)=>{
+                                            return (
+                                                <Typography variant="body1" align="left" key={index}>
+                                                    {disp}
+                                                </Typography>
+                                            );
+                                    })}
                                 </Grid>
                                 <Grid item xs={4} sm={5}>
                                     <Box
@@ -256,7 +182,7 @@ export const Result = ({result,setResult}) =>{
                                         maxWidth: { xs: 350},
                                         }}
                                         alt="イメージ画像"
-                                        src={`${process.env.PUBLIC_URL}/imgs/${image}`}
+                                        src={`${process.env.PUBLIC_URL}/imgs/${yourresult.img}`}
                                     />
                                 </Grid>
                             </Grid>
@@ -264,7 +190,7 @@ export const Result = ({result,setResult}) =>{
                                 <Grid item xs={4} sm={12} md={13} sx={{m: 1}}>
                                     <Paper elevation={0} sx={{p: 1}}>
                                         <Typography variant='h6' align="left" style={{paddingLeft: '10px'}}>特徴</Typography>
-                                        { ResultSentence.features.map((feature, index)=>{
+                                        { yourresult.features.map((feature, index)=>{
                                             return (
                                                 <Typography variant="body1" align="left" key={index}>
                                                     ・{feature}
@@ -274,33 +200,33 @@ export const Result = ({result,setResult}) =>{
                                     </Paper>
                                 </Grid>
                                 <Grid item xs={4} sm={12} md={13} sx={{m: 1}}>
-                                        <Typography variant='h6' style={{paddingLeft: '10px'}}>意識</Typography>
+                                        <Typography variant='h6' style={{paddingLeft: '10px'}}>志向</Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ minWidth: 35 }}>
+                                            <Box sx={{ minWidth: 50 }}>
                                                 <Typography variant="body2" color="text.secondary">{params[0]}%</Typography>
                                             </Box>
                                             <Box sx={{ width: '100%', mr: 1 }}>
                                                 <BorderLinearProgressA variant="determinate" value={params[0]} />
                                             </Box>
-                                            <Box sx={{ minWidth: 35 }}>
+                                            <Box sx={{ minWidth: 50 }}>
                                                 <Typography variant="body2" color="text.secondary">{100 - params[0]}%</Typography>
                                             </Box>
                                         </Box>
                                         <div className="decisionmobile">
-                                            <div style={{color: '#1e90ff', fontWeight: 'bold'}}>コード・プロダクト</div> 
                                             <div style={{color: '#ea5550', fontWeight: 'bold'}}>社会・プロジェクト</div>
+                                            <div style={{color: '#1e90ff', fontWeight: 'bold'}}>コード・プロダクト</div> 
                                         </div>
                                 </Grid>
                                 <Grid item xs={4} sm={12} md={13} sx={{m: 1}}>
                                         <Typography variant='h6' style={{paddingLeft: '10px'}}>こだわり</Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ minWidth: 35 }}>
+                                            <Box sx={{ minWidth: 50 }}>
                                                 <Typography variant="body2" color="text.secondary">{params[1]}%</Typography>
                                             </Box>
                                             <Box sx={{ width: '100%', mr: 1 }}>
                                                 <BorderLinearProgressB variant="determinate" value={params[1]} />
                                             </Box>
-                                            <Box sx={{ minWidth: 35 }}>
+                                            <Box sx={{ minWidth: 50 }}>
                                                 <Typography variant="body2" color="text.secondary">{100 - params[1]}%</Typography>
                                             </Box>
                                         </Box>
@@ -312,13 +238,13 @@ export const Result = ({result,setResult}) =>{
                                 <Grid item xs={4} sm={12} md={13} sx={{m: 1}}>
                                         <Typography variant='h6' style={{paddingLeft: '10px'}}>知識</Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ minWidth: 35 }}>
+                                            <Box sx={{ minWidth: 50 }}>
                                                 <Typography variant="body2" color="text.secondary">{params[2]}%</Typography>
                                             </Box>
                                             <Box sx={{ width: '100%', mr: 1 }}>
                                                 <BorderLinearProgressC variant="determinate" value={params[2]} />
                                             </Box>
-                                            <Box sx={{ minWidth: 35 }}>
+                                            <Box sx={{ minWidth: 50 }}>
                                                 <Typography variant="body2" color="text.secondary">{100 - params[2]}%</Typography>
                                             </Box>
                                         </Box>
@@ -328,35 +254,39 @@ export const Result = ({result,setResult}) =>{
                                         </div>
                                 </Grid>
                                 <Grid item xs={4} sm={12} md={13} sx={{m: 1}}>
-                                        <Typography variant='h6' style={{paddingLeft: '10px'}}>技術好奇心</Typography>
+                                        <Typography variant='h6' style={{paddingLeft: '10px'}}>技術意識</Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Box sx={{ minWidth: 35 }}>
-                                                <Typography variant="body2" color="text.secondary">   </Typography>
+                                            <Box sx={{ minWidth: 50 }}>
+                                                <Typography variant="body2" color="text.secondary">{params[3]}%</Typography>
                                             </Box>
                                             <Box sx={{ width: '100%', mr: 1 }}>
                                                 <BorderLinearProgressD variant="determinate" value={params[3]} />
                                             </Box>
-                                            <Box sx={{ minWidth: 35 }}>
-                                                <Typography variant="body2" color="text.secondary">{params[3]}%</Typography>
+                                            <Box sx={{ minWidth: 50 }}>
+                                                <Typography variant="body2" color="text.secondary">{100 - params[3]}%</Typography>
                                             </Box>
                                         </Box>
+                                        <div className="decisionmobile">
+                                            <div style={{color: '#192f60', fontWeight: 'bold'}}>モダン</div> 
+                                            <div style={{color: '#778899', fontWeight: 'bold'}}>レガシー</div>
+                                        </div>
                                 </Grid>
                             </Grid>
                         </Box>
                         <Typography variant="h5" color="text.secondary" style={{marginTop: '50px'}}>結果をシェアする</Typography>
                         <div style={{fontSize: '40px'}}>
                             <div style={{marginTop: '30px', display: "inline-block"}}>
-                                <a target="_blank" rel="noopener noreferrer" style={{color: '#ffffff', textDecoration: "none", margin: '5px', borderRadius: '50%', backgroundColor: '#00acee', padding: '15px', paddingLeft: '18px',paddingRight: '18px'}} href={'http://twitter.com/share?text=あなたは'+ ResultSentence.type + '型エンジニア' + typeName + 'タイプです：ITエンジニア性格診断&url=' + url}>
+                                <a target="_blank" rel="noopener noreferrer" style={{color: '#ffffff', textDecoration: "none", margin: '5px', borderRadius: '50%', backgroundColor: '#00acee', padding: '15px', paddingLeft: '18px',paddingRight: '18px'}} href={'http://twitter.com/share?text=あなたは'+ yourresult.style + '型エンジニア' + yourresult.type + 'タイプです：ITエンジニア性格診断&url=' + directurl}>
                                     <i className="fa-brands fa-twitter"></i>
                                 </a>
                             </div>
                             <div style={{display: "inline-block"}}>
-                                <a target="_blank" rel="noopener noreferrer" style={{color: '#ffffff', textDecoration: "none",margin: '5px', borderRadius: '50%', backgroundColor: '#3b5998', padding: '15px', paddingLeft: '18px',paddingRight: '18px'}} href={'http://www.facebook.com/sharer.php?u='+ url}>
+                                <a target="_blank" rel="noopener noreferrer" style={{color: '#ffffff', textDecoration: "none",margin: '5px', borderRadius: '50%', backgroundColor: '#3b5998', padding: '15px', paddingLeft: '18px',paddingRight: '18px'}} href={'http://www.facebook.com/sharer.php?u='+ directurl}>
                                     <i className="fa-brands fa-facebook"></i>
                                 </a>
                             </div>
                             <div style={{display: "inline-block"}}>
-                                <a target="_blank" rel="noopener noreferrer" style={{color: '#ffffff', textDecoration: "none",margin: '5px', borderRadius: '50%', backgroundColor: '#03d50f', padding: '15px', paddingLeft: '20px',paddingRight: '20px'}} href={'http://line.me/R/msg/text/?あなたは'+ ResultSentence.type + '型エンジニア' + typeName + 'タイプです：ITエンジニア性格診断%20' + url} >
+                                <a target="_blank" rel="noopener noreferrer" style={{color: '#ffffff', textDecoration: "none",margin: '5px', borderRadius: '50%', backgroundColor: '#03d50f', padding: '15px', paddingLeft: '20px',paddingRight: '20px'}} href={'http://line.me/R/msg/text/?あなたは'+ yourresult.style + '型エンジニア' + yourresult.type + 'タイプです：ITエンジニア性格診断%20' + directurl} >
                                     <i className="fa-brands fa-line"></i>
                                 </a>
                             </div>

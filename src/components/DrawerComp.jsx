@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from "react-router-dom";
+
+//MUIのコンポーネントをインポート
 import {
     Drawer,
     IconButton,
@@ -7,8 +10,9 @@ import {
     ListItemText,
 } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import { Link } from "react-router-dom";
 
+
+//独自DOMノードの設計
 const CustomLink = styled(Link)({
     textDecoration:"none",
     color: "grey",
@@ -23,6 +27,7 @@ const CustomListItem = styled(ListItem)({
     },
 });
 
+
 function DrawerComp () {
     const [openDrawer, setOpenDrawer] = useState(false);
     return (
@@ -35,7 +40,7 @@ function DrawerComp () {
             <List>
                 <CustomListItem onClick={() => setOpenDrawer(false)}>
                     <ListItemText>
-                        <CustomLink to="/">エンジニア性格診断テスト</CustomLink>
+                        <CustomLink to="/">エンジニア性格診断</CustomLink>
                     </ListItemText>
                 </CustomListItem>
                 <CustomListItem onClick={() => setOpenDrawer(false)}>
@@ -46,6 +51,11 @@ function DrawerComp () {
                 <CustomListItem onClick={() => setOpenDrawer(false)}>
                     <ListItemText>
                         <CustomLink to="/static">統計データ</CustomLink>
+                    </ListItemText>
+                </CustomListItem>
+                <CustomListItem onClick={() => setOpenDrawer(false)}>
+                    <ListItemText>
+                        <CustomLink to="/info">サイト情報</CustomLink>
                     </ListItemText>
                 </CustomListItem>
             </List>

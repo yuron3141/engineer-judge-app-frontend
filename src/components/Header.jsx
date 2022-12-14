@@ -1,4 +1,7 @@
 import React from 'react'
+import { Link } from "react-router-dom";
+
+//MUIのコンポーネントをインポート
 import AppBar from '@mui/material/AppBar';
 import { Toolbar } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -6,8 +9,9 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import {useTheme, useMediaQuery} from '@mui/material';
 import DrawerComponent from "./DrawerComp";
-import { Link } from "react-router-dom";
 
+
+//独自DOMノードの設計
 const Customnavlinks = styled('div')(({ theme }) => ({
     marginleft: theme.spacing(5),
     display: "flex",
@@ -27,6 +31,7 @@ const Customlink = styled(Link)(({ theme }) => ({
     },
 }));
 
+
 export const Header = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -43,13 +48,16 @@ export const Header = () => {
                 ) : (
                     <Customnavlinks>
                         <Customlink to="/" >
-                        エンジニア性格診断テスト
+                        エンジニア性格診断
                         </Customlink>
                         <Customlink to="/type">
                         エンジニア性格タイプ
                         </Customlink>
                         <Customlink to="/static">
                         統計データ
+                        </Customlink>
+                        <Customlink to="/info">
+                        サイト情報
                         </Customlink>
                     </Customnavlinks>
                 )}
