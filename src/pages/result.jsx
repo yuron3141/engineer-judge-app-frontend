@@ -110,7 +110,7 @@ export const Result = () =>{
                         return {...yourresult, img: list[5].img, style: list[5].style, type: list[5].type, discription: list[5].discription, features: list[5].features};
                     }else if(score_a < 100 && score_b < 100 && score_c < 100 && score_d > 100 ){
                         return {...yourresult, img: list[4].img, style: list[4].style, type: list[4].type, discription: list[4].discription, features: list[4].features};
-                    }else if(score_c < 100 ){
+                    }else if(score_c <= 100 ){
                         return {...yourresult, img: list[8].img, style: list[8].style, type: list[8].type, discription: list[8].discription, features: list[8].features};
                     }else if(score_c > 100 ){
                         return {...yourresult, img: list[9].img, style: list[9].style, type: list[9].type, discription: list[9].discription, features: list[9].features};
