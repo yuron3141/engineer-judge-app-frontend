@@ -1,1 +1,1 @@
-export const apiURL = 'https://engineer-judge-app.herokuapp.com/' // URL
+export const apiURL = 'https://engineer-judge-app.herokuapp.com' // URL

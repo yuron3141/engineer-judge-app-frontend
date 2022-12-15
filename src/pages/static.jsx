@@ -93,19 +93,18 @@ export const Static = () => {
     //初回レンダリング後のみ実行
     useEffect(() => { 
         const fetchData = async () => {
-            try {
-                const res = await axios.get(apiURL+`/api/v1/statics`);
-                const items = res.data;
+                axios.get(apiURL+`/api/v1/statics`).then(res => {
+                    const items = res.data;
 
-                setDatalist(items);
-                setIsloading(false);
+                    setDatalist(items);
+                    setIsloading(false);
 
-            } catch (error){
-                const {status,statusText} = error.response;
-                console.log(`Error! HTTP Status: ${status} ${statusText}`);
+                }).catch(error => {
+                    const {status,statusText} = error.response;
+                    console.log(`データを取得できませんでした。APIサーバが用意されるまでお待ちください。`);
 
-                setFetchFalse(true);
-            }
+                    setFetchFalse(true);
+                });
         };
         fetchData();
 
