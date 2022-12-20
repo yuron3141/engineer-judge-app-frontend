@@ -94,21 +94,21 @@ export const Result = () =>{
             }else{
                 setYourresult(() =>{
 
-                    if(score_a > 100  && score_b > 100 && score_c > 100 && score_d > 100){
+                    if(score_a > 100  && score_b >= 100 && score_c >= 100 && score_d > 100){
                         return {...yourresult, img: list[0].img, style: list[0].style, type: list[0].type, discription: list[0].discription, features: list[0].features};
-                    }else if(score_a > 100  && score_b > 100 && score_c < 100 && score_d > 100){
+                    }else if(score_a > 100  && score_b >= 100 && score_c <= 100 && score_d > 100){
                         return {...yourresult, img: list[2].img, style: list[2].style, type: list[2].type, discription: list[2].discription, features: list[2].features};
-                    }else if(score_a > 100 && score_b < 100 && score_c > 100 && score_d > 100){
+                    }else if(score_a > 100 && score_b <= 100 && score_c > 100 && score_d > 100){
                         return {...yourresult, img: list[1].img, style: list[1].style, type: list[1].type, discription: list[1].discription, features: list[1].features};
-                    }else if(score_a > 100 && score_b < 100 && score_c < 100 && score_d > 100){
+                    }else if(score_a > 100 && score_b <= 100 && score_c <= 100 && score_d > 100){
                         return {...yourresult, img: list[3].img, style: list[3].style, type: list[3].type, discription: list[3].discription, features: list[3].features};
-                    }else if(score_a < 100 && score_b > 100 && score_c > 100 && score_d > 100){
+                    }else if(score_a <= 100 && score_b >= 100 && score_c > 100 && score_d > 100){
                         return {...yourresult, img: list[7].img, style: list[7].style, type: list[7].type, discription: list[7].discription, features: list[7].features};
-                    }else if(score_a < 100 && score_b > 100 && score_c < 100 && score_d > 100){
+                    }else if(score_a <= 100 && score_b > 100 && score_c <= 100 && score_d > 100){
                         return {...yourresult, img: list[6].img, style: list[6].style, type: list[6].type, discription: list[6].discription, features: list[6].features};
-                    }else if(score_a < 100 && score_b < 100 && score_c > 100 && score_d > 100){
+                    }else if(score_a <= 100 && score_b <= 100 && score_c > 100 && score_d > 100){
                         return {...yourresult, img: list[5].img, style: list[5].style, type: list[5].type, discription: list[5].discription, features: list[5].features};
-                    }else if(score_a < 100 && score_b < 100 && score_c < 100 && score_d > 100 ){
+                    }else if(score_a <= 100 && score_b <= 100 && score_c <= 100 && score_d > 100 ){
                         return {...yourresult, img: list[4].img, style: list[4].style, type: list[4].type, discription: list[4].discription, features: list[4].features};
                     }else if(score_c <= 100 ){
                         return {...yourresult, img: list[8].img, style: list[8].style, type: list[8].type, discription: list[8].discription, features: list[8].features};
